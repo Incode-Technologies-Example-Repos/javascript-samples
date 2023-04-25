@@ -1,0 +1,11 @@
+/*
+  Add your customization styles here. Learn more:
+  https://docs.incode.com/docs/web/customization
+*/
+:root{
+  --font:sans-serif
+}
+
+*{
+  font-family: var(--font);
+}
