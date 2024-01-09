@@ -1,19 +1,36 @@
-
+const tokenServerURL= import.meta.env.VITE_TOKEN_SERVER_URL
 let onBoarding;
 let response;
-const container = document.getElementById("camera-container");
+const container = document.getElementById("container");
 
 function showError(e=null) {
-  container.innerHTML = "<h1>There was an error</h1>";
-  console.log(e)
+  container.innerHTML = "<h1>Something Went Wrong, see console for details</h1>";
+  console.dir(e)
 }
 
 function identifyUser(){
   onBoarding.renderLogin(container,{
-    onSuccess: response => {
-      console.log(response);
-      finish(response)
-      // User has an Incode Identity. Add success your logic here
+    onSuccess: async (response) => {
+      const {token, transactionId, interviewToken, faceMatch, customerId, email} = response;
+      if (faceMatch){
+        // User has an Incode Identity.
+        // Validate using your backend that the faceMatch was actually valid and not man in the middle attack
+        const response = await fetch(`${tokenServerURL}/auth`,
+          {
+          method: "POST",
+          mode: "cors", 
+          body: JSON.stringify({token,transactionId: transactionId, interviewToken})
+          }
+        );
+        const authAttempt = await response.json();
+        if(authAttempt.verified===true){
+          finish(customerId, email);
+        } else {
+          showError(new Error("FaceMatch is invalid."));
+        }
+      } else {
+        showError(new Error("Face did not match any user."));
+      }
     },
     onError: error => {
       showError(error)
@@ -22,9 +39,8 @@ function identifyUser(){
   });
 }
 
-function finish(response) {
-  const container = document.getElementById("finish-container");
-  container.innerHTML = "<pre>"+JSON.stringify(response, undefined, 2);+"</pre>";
+function finish(customerId, email) {
+  container.innerHTML = `<h1>Sucessfull Login:</h1>\n<p>CustomerId: ${customerId}</p>\n<p>Email: ${email}</p>`;
 }
 
 async function app() {
@@ -44,9 +60,7 @@ async function app() {
     container.innerHTML = "";
     identifyUser();
   } catch (e) {
-    console.dir(e);
-    container.innerHTML = "<h1>Something Went Wrong</h1>";
-    throw e;
+    showError(e);
   }
 }
 
