@@ -36,6 +36,10 @@ function identifyUser(){
       showError(error)
       // User not found. Add rejection your logic here
     },
+    // isOneToOne: true,
+    // oneToOneProps: {
+    //   identityId: "uuid/customerId of the user you want to match",
+    // }
   });
 }
 
