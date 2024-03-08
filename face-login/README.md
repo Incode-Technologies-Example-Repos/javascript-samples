@@ -1,11 +1,37 @@
-# Vite Web SDK example
-This examples runs the basic create session -> frontId -> backID -> processId -> Selfie -> faceMatch -> getFinishStatus flow, the code is simple enough to insert or remove any step
-for testing or creating proof of concepts.
+# Face Login Example
+This sample does face Authentication following the next process.
+
+```mermaid
+sequenceDiagram
+    participant w as WebSDK
+    participant b as Backend
+    participant a as API
+
+    note over w: create()
+    note over w: renderLogin()<br>Optionally Send customerId for 1:1
+    alt faceMatch==false
+        note over w: User doesn't exists
+    else
+        w -->> b: transactionId<br>token<br>interviewId
+        note over b: myapp.com/api/auth
+        note over b: get adminToken
+        b-->> a: transactionId<br>token<br>interviewId<br>adminToken
+        note over a: /omni/authentication/verify
+        a-->>b: verified
+        b-->>w: verified
+        alt verified==true
+            note over w: Authentication Verified
+        else
+            note over w: Authentication is not valid
+        end
+    end
+```
 
 # Requirements
-Vite requires Node.js version 14.18+, 16+. some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
+Vite requires Node.js version 14.18+, 16+. some templates require a higher Node.js
+version to work, please upgrade if your package manager warns about it.
 
-# Backend Server
+## Backend Server
 A backend server that will generate the url is needed for this sample,
 luckily for you we already have sample server for PHP, NodeJS, Python,
 PHP and Java and .NET, please reffer to our documentation on subject:
@@ -23,15 +49,17 @@ Run `npm install`
 # Config
 Copy `.env.example` to `.env.local` and add your local values
 ```
+VITE_TOKEN_SERVER_URL=/api
 VITE_API_URL=https://demo-api.incodesmile.com
 VITE_SDK_URL=https://sdk.incode.com/sdk/onBoarding-1.68.0.js
 VITE_CLIENT_ID=
-VITE_FLOW_ID=
+VITE_API_KEY=<your api key>
 ```
-Remember the Flow holds the backend counter part of the process, some configurations there might affect the behavior of the WebSDK here.
+
 
 # Run
-Vite is configured to serve the project using https and and expose him self, so you can easily test with your mobile phone on the local network.
+Vite is configured to serve the project using https and and expose him self,
+so you can easily test with your mobile phone on the local network.
 
 run `npm run dev`
 
@@ -40,12 +68,6 @@ A new server will be exposed, the data will be in the terminal
 # Build
 run `npm run build`
 
-A new build will be created in `/dist` you can serve that build everywhere just remember to serve with https.
-
-# Testing especific versions locally
-You can save the specific version needed under `/public` and change the `VITE_SDK_URL` variable on `.env.local` to something like:
-
-```
-VITE_SDK_URL=/name-of-the-js-file.js
-```
+A new build will be created in `/dist` you can serve that build everywhere
+just remember to serve with https.
 
