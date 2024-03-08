@@ -15,7 +15,7 @@ function identifyUser(){
       if (faceMatch){
         // User has an Incode Identity.
         // Validate using your backend that the faceMatch was actually valid and not man in the middle attack
-        const response = await fetch(`${tokenServerURL}/authentication-verify`,
+        const response = await fetch(`${tokenServerURL}/auth`,
           {
           method: "POST",
           mode: "cors", 
