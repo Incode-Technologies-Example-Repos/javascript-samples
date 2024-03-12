@@ -16,6 +16,47 @@ the session instead of creating a new one.
 The `uuid` links both desktop and mobile that are running in parallel to give the best possible experience to
 the user.
 
+This diagram explains it in detail:
+
+```mermaid
+sequenceDiagram
+    participant f as Frontend
+    participant b as Backend
+    participant a as API
+    
+    alt uuid exists in query params
+        f -->> b: /start
+        b -->> a: /omni/start
+        a -->> b: {token, interviewId}
+        note over b: Generate uuid
+        note over b: Save Session<br>{token, interviewId, uuid}
+        b-->> f: {token, interviewId, uuid}
+    else completely new session
+        f -->> b: /start?uuid=<uuid>
+        note over b: Retrieve stored Session<br>{token, interviewId, uuid}
+        b-->> f: {token, interviewId, uuid}
+    end
+
+    alt Desktop
+        note over f: renderRedirectToMobile()
+        
+        loop while onboarding_status!=='ONBOARDING_FINISHED'
+        note over f, a: This loop happens automatically<br> inside the method
+            f -->> a: /omni/onboarding-status {token}
+            a-->> f: {onboarding_status}
+        end
+    else Mobile
+        note over f: userConsent
+        note over f: frontId
+        note over f: backId
+        note over f: processId
+        note over f: selfie
+        note over f: facematch
+        note over f: getFinishStatus
+    end
+    note over f: Finish screen
+```
+
 # Requirements
 Vite requires Node.js version 14.18+, 16+. some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
 
