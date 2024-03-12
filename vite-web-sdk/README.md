@@ -10,12 +10,25 @@ Run `npm install`
 # Config
 Copy `.env.example` to `.env.local` and add your local values
 ```
+VITE_TOKEN_SERVER_URL=/api
+VITE_CLIENT_ID=<client id>
+VITE_LOCAL_SERVER_URL=https://your-ip:port/
 VITE_API_URL=https://demo-api.incodesmile.com
-VITE_SDK_URL=https://sdk.incode.com/sdk/onBoarding-1.60.0.js
-VITE_CLIENT_ID=
-VITE_FLOW_ID=
+VITE_SDK_URL=https://sdk.incode.com/sdk/onBoarding-1.69.0.js
 ```
 Remember the Flow holds the backend counter part of the process, some configurations there might affect the behavior of the WebSDK here.
+
+# Backend Server
+A backend server that will generate the url is needed for this sample,
+luckily for you we already have sample server for PHP, NodeJS, Python,
+PHP and Java and .NET, please reffer to our documentation on subject:
+[Quick Start Sample Server](https://developer.incode.com/docs/quick-start-servers)
+
+In order to simplfy development, this repo is configured to reverse
+proxy a local backend server (`http://localhost:3000`) in the `/api`
+url like `https://<your-ip>:5173/api`, if you want to point your
+frontend development to a backend server deployed elsewhere, change
+the VITE_TOKEN_SERVER_URL to the full url of such server.
 
 # Run
 Vite is configured to serve the project using https and and expose him self, so you can easily test with your mobile phone on the local network.
