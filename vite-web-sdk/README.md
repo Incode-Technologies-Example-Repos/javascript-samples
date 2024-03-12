@@ -1,6 +1,20 @@
 # Vite Web SDK example
-This examples runs the basic create session -> frontId -> backID -> processId -> Selfie -> faceMatch -> getFinishStatus flow, the code is simple enough to insert or remove any step
-for testing or creating proof of concepts.
+This examples runs the basic create session -> renderRedirectToMobile -> userConsent -> frontId -> backID ->
+processId -> Selfie -> faceMatch -> getFinishStatus flow, the code is simple enough to insert or remove any
+step for testing or creating proof of concepts.
+
+The code is made with renderRedirectToMobile as first step, if it detects that the user is in desktop it will
+present renderRedirectToMobile with an `URL` that points to this same file using the `VITE_LOCAL_SERVER_URL`
+enviroment variable + a generated `uuid` that we received from the call to `/start`.
+
+The `renderRedirectToMobile` has a behaviour where it automatically polls for the status of the session, and
+when it detects that the session has finished, it executes the `onSuccess` method to continue.
+
+The URL when opened in mobile will read the `uuid` from the query params, and send it to `/start` to continue
+the session instead of creating a new one.
+
+The `uuid` links both desktop and mobile that are running in parallel to give the best possible experience to
+the user.
 
 # Requirements
 Vite requires Node.js version 14.18+, 16+. some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
