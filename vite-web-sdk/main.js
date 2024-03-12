@@ -1,19 +1,44 @@
 
 // Lets put all the variables needed for all modules in the global scope
-const tokenServerURL= import.meta.env.VITE_TOKEN_SERVER_URL
+const tokenServerURL= import.meta.env.VITE_TOKEN_SERVER_URL;
+const localServerUrl= import.meta.env.VITE_LOCAL_SERVER_URL;
 let incode;
 let session;
 const container = document.getElementById("camera-container");
 
 async function startOnboardingSession() {
-  const response = await fetch(`${tokenServerURL}/start`);
-  const session = await response.json();
-  return session;
+  const urlParams = new URLSearchParams(window.location.search);
+  const uuid = urlParams.get('uuid');
+
+  let sessionStartUrl = `${tokenServerURL}/start`
+  if (uuid) sessionStartUrl +=`?uuid=${uuid}`;
+  
+  const response = await fetch(sessionStartUrl);
+  if (!response.ok){
+    const sessionData = await response.json();
+    throw new Error(sessionData.error);
+  }
+
+  return await response.json();
 }
 
 function showError(e=null) {
   container.innerHTML = "<h1>There was an error</h1>";
-  console.log(e)
+  console.log(e.message)
+}
+
+function renderRedirectToMobile(){
+  if (incode.isDesktop()) {
+    incode.renderRedirectToMobile(container, {
+      onSuccess: () => {
+        finish();
+      },
+      session: session,
+      url: `${localServerUrl}?uuid=${session.uuid}`
+    });
+  } else {
+    renderFrontIDCamera();
+  }
 }
 
 function renderFrontIDCamera() {
@@ -90,11 +115,15 @@ async function app() {
     
     // Create the single session
     container.innerHTML = "<h1>Creating session...</h1>";
-    session = await startOnboardingSession();
-
+    try {
+      session = await startOnboardingSession();
+    } catch(e) {
+      showError(e);
+      return;
+    }
     // Empty the container and starting the flow
     container.innerHTML = "";
-    renderFrontIDCamera();
+    renderRedirectToMobile();
   } catch (e) {
     console.dir(e);
     container.innerHTML = "<h1>Something Went Wrong</h1>";
