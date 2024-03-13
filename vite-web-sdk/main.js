@@ -15,7 +15,7 @@ async function startOnboardingSession() {
   if (uuid) sessionStartUrl +=`?uuid=${uuid}`;
   
   const response = await fetch(sessionStartUrl);
-  if (!response.ok){
+  if (!response.ok) {
     const sessionData = await response.json();
     throw new Error(sessionData.error);
   }
@@ -51,6 +51,11 @@ function renderUserConsent(){
 }
 
 function renderFrontIDCamera() {
+  
+  // Optional but valuable for fraud prevention, hurts conversion
+  // incode.sendFingerprint(session);
+  // incode.sendGeolocation(session);
+  
   incode.renderCamera("front", container, {
     onSuccess: renderBackIDCamera,
     onError: showError,
