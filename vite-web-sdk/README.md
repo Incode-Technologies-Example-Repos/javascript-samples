@@ -24,14 +24,14 @@ sequenceDiagram
     participant b as Backend
     participant a as API
     
-    alt uuid exists in query params
+    alt completely new session
         f -->> b: /start
         b -->> a: /omni/start
         a -->> b: {token, interviewId}
         note over b: Generate uuid
         note over b: Save Session<br>{token, interviewId, uuid}
         b-->> f: {token, interviewId, uuid}
-    else completely new session
+    else uuid comes in query params
         f -->> b: /start?uuid=<uuid>
         note over b: Retrieve stored Session<br>{token, interviewId, uuid}
         b-->> f: {token, interviewId, uuid}
