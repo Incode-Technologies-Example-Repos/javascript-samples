@@ -2,6 +2,7 @@
 // Lets put all the variables needed for all modules in the global scope
 const tokenServerURL= import.meta.env.VITE_TOKEN_SERVER_URL;
 const localServerUrl= import.meta.env.VITE_LOCAL_SERVER_URL;
+
 let incode;
 let session;
 const container = document.getElementById("camera-container");
@@ -34,7 +35,8 @@ function renderRedirectToMobile(){
         finish();
       },
       session: session,
-      url: `${localServerUrl}?uuid=${session.uuid}`
+      url: `${localServerUrl}?uuid=${session.uuid}`,
+      // showSms: false, //uncomment if you want to remove the SMS feature
     });
   } else {
     renderUserConsent();
@@ -103,8 +105,7 @@ async function app() {
     const clientId = import.meta.env.VITE_CLIENT_ID;
     incode = window.OnBoarding.create({
       clientId: clientId,
-      apiURL: apiURL,
-      theme: {},
+      apiURL: apiURL
     });
     
     // Incode web_sdk need to preload some core component before being usable
