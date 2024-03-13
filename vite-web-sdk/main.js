@@ -9,7 +9,7 @@ const container = document.getElementById("camera-container");
 async function startOnboardingSession() {
   const urlParams = new URLSearchParams(window.location.search);
   const uuid = urlParams.get('uuid');
-
+  
   let sessionStartUrl = `${tokenServerURL}/start`
   if (uuid) sessionStartUrl +=`?uuid=${uuid}`;
   
@@ -18,7 +18,7 @@ async function startOnboardingSession() {
     const sessionData = await response.json();
     throw new Error(sessionData.error);
   }
-
+  
   return await response.json();
 }
 
@@ -37,8 +37,15 @@ function renderRedirectToMobile(){
       url: `${localServerUrl}?uuid=${session.uuid}`
     });
   } else {
-    renderFrontIDCamera();
+    renderUserConsent();
   }
+}
+
+function renderUserConsent(){
+  incode.renderUserConsent(container, {
+    session: session,
+    onSuccess: renderFrontIDCamera,
+  });
 }
 
 function renderFrontIDCamera() {
@@ -71,29 +78,20 @@ async function  processID() {
 
 function renderSelfieCamera() {
   incode.renderCamera("selfie", container, {
-    onSuccess: faceMatch,
+    onSuccess: finish,
     onError: showError,
     token: session,
     numberOfTries: -1,
     noWait: true
   });
 }
-function faceMatch() {
-  incode.renderFaceMatch(container, {
-    onSuccess: finish,
-    onError: showError,
-    token: session,
-    liveness: true,
-    existingUser: false,
-  });
-}
+
 
 function finish() {
   // Finishing the session works along with the configuration in the flow
   // webhooks and business rules are ran here.
   const response = incode.getFinishStatus(import.meta.env.VITE_FLOW_ID, session);
-  console.log(response);
-
+  
   const container = document.getElementById("finish-container");
   container.innerHTML = "<h1>Finished</h1>";
 }
