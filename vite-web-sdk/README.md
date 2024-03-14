@@ -66,9 +66,8 @@ Run `npm install`
 Copy `.env.example` to `.env.local` and add your local values
 ```
 VITE_TOKEN_SERVER_URL=/api
-VITE_CLIENT_ID=<client id>
 VITE_LOCAL_SERVER_URL=https://your-ip:port/
-VITE_API_URL=https://demo-api.incodesmile.com
+VITE_API_URL=https://demo-api.incodesmile.com/0
 VITE_SDK_URL=https://sdk.incode.com/sdk/onBoarding-1.69.0.js
 ```
 Remember the Flow holds the backend counter part of the process, some configurations there might affect the behavior of the WebSDK here.

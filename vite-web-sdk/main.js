@@ -107,9 +107,7 @@ async function app() {
   try {
     // Create the instance of incode linked to a client
     const apiURL = import.meta.env.VITE_API_URL;
-    const clientId = import.meta.env.VITE_CLIENT_ID;
     incode = window.OnBoarding.create({
-      clientId: clientId,
       apiURL: apiURL
     });
     
