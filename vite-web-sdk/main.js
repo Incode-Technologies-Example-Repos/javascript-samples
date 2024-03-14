@@ -83,9 +83,11 @@ async function  processID() {
   renderSelfieCamera();
 }
 
+
+
 function renderSelfieCamera() {
   incode.renderCamera("selfie", container, {
-    onSuccess: finish,
+    onSuccess: processFace,
     onError: showError,
     token: session,
     numberOfTries: -1,
@@ -93,6 +95,13 @@ function renderSelfieCamera() {
   });
 }
 
+async function  processFace() {
+  const results = await incode.processFace({
+    token: session.token,
+  });
+  console.log("processFace results", results);
+  finish();
+}
 
 function finish() {
   // Finishing the session works along with the configuration in the flow
